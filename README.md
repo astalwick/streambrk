@@ -25,7 +25,7 @@ So, briefly, usage looks something like this:
 
 ```javascript
 var part = 0;
-var newPartFn = function() {
+var newPartFn = function(callback) {
   part++;
   var writeStream = fs.createWriteStream('/tmp/streambrk_'+part+'.txt');
   callback(null, writeStream);
