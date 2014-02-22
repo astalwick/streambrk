@@ -1,0 +1,17 @@
+{
+  "name": "StreamBrk",
+  "version": "0.1.0",
+  "private": false,
+  "dependencies": {
+    "async": "0.2.x",    
+    "mocha": "1.17.x",
+    "should": "2.1.x",
+    "seedrandom": "2.3.x"   
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "should": "2.1.x"
+  }
+}
