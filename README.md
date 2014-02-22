@@ -6,8 +6,6 @@ StreamBrk - Simple Node.js Stream Splitter
 Installation
 ------------
 
-Either copy the code in StreamBrk.js (up there) or:
-
 ```bash
 npm install streambrk
 ```
