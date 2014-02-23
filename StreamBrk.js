@@ -10,6 +10,7 @@ var StreamBrk = module.exports = function (options) {
 
   this.bytesWritten   = 0;
   this.bytesThisPart  = 0;
+  this.partIndex      = 0;
 
   this.hash           = crypto.createHash('md5');
 
@@ -58,7 +59,7 @@ StreamBrk.prototype._write = function(chunk, encoding, callback) {
         if(self.currentStream)
           callback(null, null)
         else {
-          self.newPartFn(callback)
+          self.newPartFn(self.partIndex, callback)
         }
       }
     , function(newPart, callback) {
@@ -75,6 +76,7 @@ StreamBrk.prototype._write = function(chunk, encoding, callback) {
         if(partComplete)
           // oh, we completed a part.  end it and callback when done.       
           self.currentStream.end(function() {
+            self.partIndex++;
             self.bytesThisPart = 0;
             self.currentStream = undefined;
             callback();

@@ -78,7 +78,7 @@ function streamTester(done, options) {
 
     var r = new FakeReadableStream({maxLength: length, seed: seed});
     var s = new StreamBrk({
-      newPartFn: function(callback) {
+      newPartFn: function(partNumber, callback) {
         callback(null, new FakeWritableStream({highWaterMark: highWaterMark, writeDelay: writeDelay}));
       }
     , partSize: partSize
