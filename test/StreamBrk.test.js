@@ -50,6 +50,7 @@ function FakeWritableStream(options) {
   options = options || {};
   this.writeDelay = options.writeDelay;
   this.hash = crypto.createHash('md5');
+  this.ended = false;
 
   this.on('finish', function() {
     self.hash = self.hash.digest('hex');
@@ -66,6 +67,10 @@ FakeWritableStream.prototype._write = function(chunk, encoding, callback) {
     setImmediate(callback);
 }
 
+FakeWritableStream.prototype.end = function() {
+  this.ended = true;
+  stream.Writable.prototype.end.apply(this, arguments);
+};
 
 
 function streamTester(done, options) {
@@ -75,20 +80,27 @@ function streamTester(done, options) {
     , highWaterMark = options.highWaterMark
     , writeDelay    = options.writeDelay
     , seed          = options.seed
+    , writables     = []
 
-    var r = new FakeReadableStream({maxLength: length, seed: seed});
-    var s = new StreamBrk({
-      newPartFn: function(partNumber, callback) {
-        callback(null, new FakeWritableStream({highWaterMark: highWaterMark, writeDelay: writeDelay}));
-      }
-    , partSize: partSize
-    });
-    s.on('finish', function(){
-      done();
-      r.hash.should.equal(s.hash)
-    });
+  var r = new FakeReadableStream({maxLength: length, seed: seed});
+  var s = new StreamBrk({
+    newPartFn: function(partNumber, callback) {
+      var w = new FakeWritableStream({highWaterMark: highWaterMark, writeDelay: writeDelay});
+      writables.push(w)
+      callback(null, w);
+    }
+  , partSize: partSize
+  });
+  s.on('finish', function(){
+    
+    r.hash.should.equal(s.hash)
+    for(var i = 0; i < writables.length; i++) {
+      writables[i].ended.should.equal(true);
+    }
+    done();
+  });
 
-    r.pipe(s);
+  r.pipe(s);
 }
 
 describe('StreamBrk', function(){

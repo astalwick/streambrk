@@ -30,13 +30,13 @@ StreamBrk.prototype._write = function(chunk, encoding, callback) {
 
   async.whilst(function() {
     // keep going as long as we have more data.
-    return chunk && chunk.length > 0;
+    return chunk && chunk.length > 0 && !self.ended;
   }, function(callback) {
     var partComplete = false
       , chunkToWrite
       ;
 
-    if(self.bytesThisPart + chunk.length > self.partSize) {
+    if(self.bytesThisPart + chunk.length >= self.partSize) {
       // we can't write more data than there is room in our part.
       // so, if we HAVE more data, we need to 
       // a) slice it and take as much data as we can, so we can finish our part,
@@ -87,7 +87,6 @@ StreamBrk.prototype._write = function(chunk, encoding, callback) {
   }, callback);
 }
 
-
 StreamBrk.prototype._calcThroughput = function(startTime, bytes) {
   var totalMs     = new Date().getTime() - startTime
     , throughput  = Math.round((bytes / 1024) / (totalMs / 1000))
@@ -96,6 +95,10 @@ StreamBrk.prototype._calcThroughput = function(startTime, bytes) {
 }
 
 StreamBrk.prototype._onFinish = function() {
+  this.ended = true;
+  if(this.currentStream)
+    this.currentStream.end();
+
   if(process.env.DEBUG == 'true')
     console.log('StreamBrk total throughput', this._calcThroughput(this.startTime, this.bytesWritten));
   this.hash = this.hash.digest('hex');
