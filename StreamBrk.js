@@ -3,7 +3,7 @@ var stream  = require('stream')
   , async   = require('async')
   , crypto  = require('crypto')
 
-function StreamBrk(options) {
+var StreamBrk = module.exports = function StreamBrk(options) {
   options             = options || {};
   this.newPartFn      = options.newPartFn;
   this.partSize       = options.partSize || 50000;
@@ -108,5 +108,3 @@ StreamBrk.prototype._onFinish = function() {
     console.log('StreamBrk total throughput', this._calcThroughput(this.startTime, this.bytesWritten));
   this.hash = this.hash.digest('hex');
 }
-
-exports.StreamBrk = StreamBrk;  

@@ -1,6 +1,6 @@
 {
   "name": "streambrk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": false,
   "dependencies": {
     "async": "0.2.x",
