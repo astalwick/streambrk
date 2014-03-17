@@ -5,7 +5,7 @@ var assert      = require("assert")
   , crypto      = require('crypto')
   , util        = require('util')
 
-  , StreamBrk   = require("../StreamBrk")
+  , StreamBrk   = require("../StreamBrk").StreamBrk
 
 function FakeReadableStream(options) {
   var self = this;

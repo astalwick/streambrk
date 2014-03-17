@@ -3,7 +3,7 @@ var stream  = require('stream')
   , async   = require('async')
   , crypto  = require('crypto')
 
-var StreamBrk = module.exports = function (options) {
+function StreamBrk(options) {
   options             = options || {};
   this.newPartFn      = options.newPartFn;
   this.partSize       = options.partSize || 50000;
@@ -18,6 +18,11 @@ var StreamBrk = module.exports = function (options) {
   this.startTime;
 
   this.on('finish', this._onFinish);
+
+  this._write           = this._write.bind(this);
+  this._onFinish        = this._onFinish.bind(this);
+  this.end              = this.end.bind(this);
+  this._calcThroughput  = this._calcThroughput.bind(this);
 
   stream.Writable.call(this, options);
 };
